@@ -7,13 +7,23 @@ let enabledModules = {
                 "name": "Introduzione", 
                 "description": "Introduzione all'energie rinnovabili"
             },
+            "fonti-di-energia.html": {
+                "name": "Fonti di energia",
+                "description": "Le principali fonti di energia rinnovabile"
+            },
+            "vantaggi-e-svantaggi.html": {
+                "name": "Vantaggi e svantaggi",
+                "description": "Vantaggi e svantaggi delle energie rinnovabili"
+            },
         }
-
-    },
+    }
 }
 
 // For each module in enabledModules create a card element in index
 $.each(enabledModules, function(module, pages) {
+    // Replace - with _
+    module = module.replace(/-/g, "_");
+
     $("#selectArgumentDiv").append(`
         <div class="card">
             <div class="card-body" id="${module}">
@@ -25,12 +35,12 @@ $.each(enabledModules, function(module, pages) {
     `);
 
     $.each(pages["files"], function(fileName, content) {
-        var idName = module + "-" + fileName.replace(".html", "");
+        var idName = module + "-" + fileName.replace(".html", "")
         $("#contentDiv").append(`
             <div class="card">
                 <div class="card-body" id="${idName}">
                     <h4 class="card-title">${content["name"]}</h4>
-                    <iclass="fas fa-arrow-right position-absolute top-50 end-0 translate-middle-y"></i>
+                    <i class="fas fa-arrow-right position-absolute top-50 end-0 translate-middle-y"></i>
                     <h6 class="text-muted card-subtitle mb-2">${content["description"]}</h6>
                 </div>
             </div>
@@ -39,14 +49,31 @@ $.each(enabledModules, function(module, pages) {
         // When a card is clicked, load the corresponding file in the card
         $("#contentDiv").on("click", "#" + idName, function() {
             $("#loader").fadeIn("fast");
-            $('.div-content-card').load("./pages/" + module + "/" + fileName, function() {
-            $('.card-content').fadeIn()
-                .css({top:1000})
-                .animate({top:70}, 500, function() {
-                    $('#card-container').attr('style','display:none !important');
-                    $('.footer').hide();
-                });
-                $("#loader").fadeOut("fast");
+            // Replace _ with - in module name
+            module = module.replace(/_/g, "-");
+            $('.div-content-card').load("./pages/" + module + "/" + fileName, function(responseTxt, statusTxt, xhr) {
+                if(statusTxt == "success") {          
+                    $("custom-image").each(function() {
+                        var fileName = $(this).attr("file-name");
+                        var altText = $(this).attr("alt");
+                        var classes = $(this).attr("class");
+                        var style = $(this).attr("style");
+                    
+                        insertImage(fileName, altText, classes, style, this);
+                    });
+                    
+                    $('.card-content').fadeIn()
+                    .css({top:1000})
+                    .animate({top:70}, 500, function() {
+                        $('#card-container').attr('style','display:none !important');
+                        $('.footer').hide();
+                    });
+                    $("#loader").fadeOut("fast");
+                }
+                if(statusTxt == "error") {
+                    $("#loader").fadeOut("fast");
+                    alert("Error: " + xhr.status + ": " + xhr.statusText);
+                }
             });
         });
     });
@@ -61,7 +88,6 @@ $.each(enabledModules, function(module, pages) {
     });    
 });
 
-
 function backToSection() {
     $("#contentDiv").fadeOut("fast", function() {
         $("#selectArgumentDiv").fadeIn("fast");
@@ -69,6 +95,19 @@ function backToSection() {
     $("#backToSection").fadeOut("fast");
 }
 
+function insertImage(fileName, altText, classes, style, element) {
+    console.log("Inserting image " + fileName + " with alt text " + altText + " and classes " + classes);
+    var currentSection = $("#contentDiv").find(".card-body").filter(function() {
+        return $(this).css("display") == "block";
+    }).attr("id");
+    var currentModule = currentSection.split("-")[0];
+    
+    // Replace _ with - in module name
+    currentModule = currentModule.replace(/_/g, "-");
+
+    var image = `<img src="./pages/${currentModule}/images/${fileName}" alt="${altText}" class="${classes}" style="${style}">`;
+    $(element).replaceWith(image);
+}
 
 $("#card-close").click(function() {
     $('.card-content').fadeIn()
