@@ -145,13 +145,13 @@ body {
 /* Handle */
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bs-purple);
+  background: var(--bs-green);
 }
 
 /* Handle on hover */
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bs-indigo);
+  background: var(--bs-teal);
 }
 
 .footer {

@@ -16,6 +16,24 @@ let enabledModules = {
                 "description": "Vantaggi e svantaggi delle energie rinnovabili"
             },
         }
+    },
+    "comunita-energetiche": {
+        "name": "Le comunità energetiche",
+        "description": "Le comunità energetiche",
+        "files": {
+            "introduzione.html": {
+                "name": "Introduzione",
+                "description": "Introduzione alle comunità energetiche"
+            },
+            "obiettivi.html": {
+                "name": "Obiettivi",
+                "description": "Gli obiettivi delle comunità energetiche"
+            },
+            "esempio.html": {
+                "name": "Esempio",
+                "description": "Esempio di una comunità energetica"
+            },
+        }
     }
 }
 
@@ -34,9 +52,14 @@ $.each(enabledModules, function(module, pages) {
         </div>
     `);
 
+    $("#contentCards").append(`
+        <div class="card-group" id="contentDiv-${module}" style="display: none !important;"></div>
+    `);
+
+
     $.each(pages["files"], function(fileName, content) {
         var idName = module + "-" + fileName.replace(".html", "")
-        $("#contentDiv").append(`
+        $("#contentDiv-" + module).append(`
             <div class="card">
                 <div class="card-body" id="${idName}">
                     <h4 class="card-title">${content["name"]}</h4>
@@ -46,8 +69,18 @@ $.each(enabledModules, function(module, pages) {
             </div>
         `);
 
+         // When a card is clicked, show the corresponding section
+        $("#selectArgumentDiv").on("click", "#" + module, function() {        
+            $("#backToSection").fadeIn("fast");
+            $("#backToSection").attr("onclick", "backToSection()");
+            $("#selectArgumentDiv").fadeOut("fast", function() {
+                $("#contentDiv-" + module).fadeIn("fast");
+                $("#contentCards").fadeIn("fast");
+            });
+        });    
+
         // When a card is clicked, load the corresponding file in the card
-        $("#contentDiv").on("click", "#" + idName, function() {
+        $("#contentDiv-" + module).on("click", "#" + idName, function() {
             $("#loader").fadeIn("fast");
             // Replace _ with - in module name
             module = module.replace(/_/g, "-");
@@ -77,31 +110,28 @@ $.each(enabledModules, function(module, pages) {
             });
         });
     });
-
-    // When a card is clicked, show the corresponding section
-    $("#selectArgumentDiv").on("click", "#" + module, function() {
-        $("#backToSection").fadeIn("fast");
-        $("#backToSection").attr("onclick", "backToSection()");
-        $("#selectArgumentDiv").fadeOut("fast", function() {
-            $("#contentDiv").fadeIn("fast");
-        });
-    });    
 });
 
 function backToSection() {
-    $("#contentDiv").fadeOut("fast", function() {
+    // Find the current section using the id of the displayed div (contentDiv + module name)
+    var currentModule = $("#contentCards").find(".card-group").filter(function() {
+        return $(this).css("display") != "none";
+    }).attr("id").split("-")[1];
+
+    $("#contentDiv-" + currentModule).fadeOut("fast", function() {
         $("#selectArgumentDiv").fadeIn("fast");
+        $("#backToSection").fadeOut("fast");
+        $("#contentCards").hide();
     });
-    $("#backToSection").fadeOut("fast");
 }
 
 function insertImage(fileName, altText, classes, style, element) {
     console.log("Inserting image " + fileName + " with alt text " + altText + " and classes " + classes);
-    var currentSection = $("#contentDiv").find(".card-body").filter(function() {
-        return $(this).css("display") == "block";
-    }).attr("id");
-    var currentModule = currentSection.split("-")[0];
-    
+    // In contentCard, find the current section using the id of the displayed div (contentDiv + module name) the class is card-group
+    var currentModule = $("#contentCards").find(".card-group").filter(function() {
+        return $(this).css("display") != "none";
+    }).attr("id").split("-")[1];
+
     // Replace _ with - in module name
     currentModule = currentModule.replace(/_/g, "-");
 
