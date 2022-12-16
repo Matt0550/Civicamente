@@ -1,3 +1,9 @@
+/*
+    Civicamente
+    Github: @Matt0550
+    License: MIT
+*/
+
 let enabledModules = {
     "energie-rinnovabili": {
         "name": "Energie rinnovabili",
@@ -33,6 +39,10 @@ let enabledModules = {
                 "name": "Esempio",
                 "description": "Esempio di una comunità energetica"
             },
+            "normative.html": {
+                "name": "Normative",
+                "description": "Normative sulle comunità energetiche in Italia e in Europa"
+            },
         }
     }
 }
@@ -55,7 +65,6 @@ $.each(enabledModules, function(module, pages) {
     $("#contentCards").append(`
         <div class="card-group" id="contentDiv-${module}" style="display: none !important;"></div>
     `);
-
 
     $.each(pages["files"], function(fileName, content) {
         var idName = module + "-" + fileName.replace(".html", "")
@@ -113,11 +122,17 @@ $.each(enabledModules, function(module, pages) {
 });
 
 function backToSection() {
-    // Find the current section using the id of the displayed div (contentDiv + module name)
-    var currentModule = $("#contentCards").find(".card-group").filter(function() {
-        return $(this).css("display") != "none";
-    }).attr("id").split("-")[1];
-
+    try {
+        // Find the current section using the id of the displayed div (contentDiv + module name)
+        var currentModule = $("#contentCards").find(".card-group").filter(function() {
+            return $(this).css("display") != "none";
+        }).attr("id").split("-")[1];
+    } catch (error) {
+        // If an error occurs, reload the page to reset the state of the sections
+        console.log("Error: " + error);
+        location.reload();
+    }
+    
     $("#contentDiv-" + currentModule).fadeOut("fast", function() {
         $("#selectArgumentDiv").fadeIn("fast");
         $("#backToSection").fadeOut("fast");
