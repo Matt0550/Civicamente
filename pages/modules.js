@@ -44,6 +44,24 @@ let enabledModules = {
                 "description": "Normative sulle comunità energetiche in Italia e in Europa"
             },
         }
+    },
+    "greta-thunberg": {
+        "name": "Greta Thunberg",
+        "description": "Perché Greta Thunberg è importante",
+        "files": {
+            "introduzione.html": {
+                "name": "Introduzione",
+                "description": "Introduzione a Greta Thunberg"
+            },
+            "biografia.html": {
+                "name": "Biografia",
+                "description": "Biografia di Greta Thunberg"
+            },
+            "critiche.html": {
+                "name": "Critiche",
+                "description": "Critiche a Greta Thunberg"
+            },
+        }
     }
 }
 
@@ -150,8 +168,9 @@ function insertImage(fileName, altText, classes, style, element) {
     // Replace _ with - in module name
     currentModule = currentModule.replace(/_/g, "-");
 
-    var image = `<img src="./pages/${currentModule}/images/${fileName}" alt="${altText}" class="${classes}" style="${style}">`;
-    $(element).replaceWith(image);
+    // Add small text under the image with alt text
+    var image = `<img src="./pages/${currentModule}/images/${fileName}" alt="${altText}" class="${classes}" style="${style}"> <small class="text-muted d-flex justify-content-center pb-4">${altText}</small>`;
+    $(element).replaceWith(image);    
 }
 
 $("#card-close").click(function() {
