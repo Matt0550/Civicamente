@@ -62,6 +62,16 @@ let enabledModules = {
                 "description": "Critiche a Greta Thunberg"
             },
         }
+    },
+    "nzeb": {
+        "name": "Analisi nZEB",
+        "description": "Diffusione degli edifici nZEB in Italia",
+        "files": {
+            "analisi.html": {
+                "name": "Analisi",
+                "description": "Analisi di un grafico"
+            }
+        }
     }
 }
 
